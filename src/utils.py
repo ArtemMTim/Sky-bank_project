@@ -6,10 +6,14 @@ from typing import Dict, List, Union
 
 def transactions_list_func(file_name: str) -> List[Dict[str, Union[str, int, dict, float]]]:
     """Принимает название JSON файла с информацией о транзакциях.
-    Файл располагается в директории data/ корневого каталого проекта.
+    Файл располагается в директории data корневого каталого проекта.
     Возвращает список словарей транзакций."""
-    project_path = "/".join((os.path.dirname(os.path.abspath(__file__))).split("/")[:-1])
-    data_path = f"{project_path}/data/"
+    if os.name == "nt":
+        project_path = "\\".join((os.path.dirname(os.path.abspath(__file__))).split("\\")[:-1])
+        data_path = f"{project_path}\\data\\"
+    else:
+        project_path = "/".join((os.path.dirname(os.path.abspath(__file__))).split("/")[:-1])
+        data_path = f"{project_path}/data/"
     try:
         with open(f"{data_path}{file_name}", "r", encoding="UTF-8") as file:
             try:

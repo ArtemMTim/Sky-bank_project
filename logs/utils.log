@@ -1,0 +1,5 @@
+2024-06-26 19:38:34,759 - utils.py - transactions_list_func - INFO - Программа начинает работу.
+2024-06-26 19:38:34,759 - utils.py - transactions_list_func - INFO - Программа пытается открыть файл 'operations.json'.
+2024-06-26 19:38:34,759 - utils.py - transactions_list_func - INFO - Программа начинает обработку файла 'operations.json'.
+2024-06-26 19:38:34,759 - utils.py - transactions_list_func - INFO - Программа успешно обработала файл 'operations.json'.
+2024-06-26 19:38:34,760 - utils.py - transactions_list_func - INFO - Программа завершает свою работу.

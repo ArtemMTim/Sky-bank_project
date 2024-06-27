@@ -1,3 +1,4 @@
+import os
 from unittest.mock import patch
 
 import pytest
@@ -43,12 +44,13 @@ request_to_return = {
 
 
 @patch("requests.get")
+@patch.dict(os.environ, {"API_KEY": "my_api_key"})
 def test_transaction_convertation_2(mock_request):
     mock_request.return_value.json.return_value = request_to_return
     assert transaction_convertation(test_transaction_non_rub) == 1000.0
     mock_request.assert_called_once_with(
         "https://api.apilayer.com/exchangerates_data/convert?to=RUB&from=USD&amount=10",
-        headers={"apikey": "QXAJhSLkG5JV2jazZwEOrrjGrdlVweiw"},
+        headers={"apikey": "my_api_key"},
         timeout=5,
         allow_redirects=False,
     )

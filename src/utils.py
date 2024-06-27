@@ -4,55 +4,46 @@ import os
 from json import JSONDecodeError
 from typing import Dict, List, Union
 
-# Определяем путь к папке "logs" для различных ОС
-if os.name == "nt":
-    project_path = "\\".join((os.path.dirname(os.path.abspath(__file__))).split("\\")[:-1])
-    log_path = f"{project_path}\\logs\\"
-else:
-    project_path = "/".join((os.path.dirname(os.path.abspath(__file__))).split("/")[:-1])
-    log_path = f"{project_path}/logs/"
+from config import DATA_DIR, UTILS_LOGS
 
 # Проводим настройку логгеров для логирования в файл (уровень DEBUG) и в консоль (уровень ERROR)
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(filename)s - %(funcName)s - %(levelname)s - %(message)s",
-    filename=f"{log_path}utils.log",
-    filemode="w",
-)
+logger = logging.getLogger(__file__)
+logger.setLevel(logging.DEBUG)
 
-# Определяем логгеры для каждой из представленных функций
-transact_logger = logging.getLogger("app.transact")
+file_handler = logging.FileHandler(UTILS_LOGS, mode="w")
+file_formatter = logging.Formatter("%(asctime)s - %(filename)s - %(funcName)s - %(levelname)s - %(message)s")
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
 
 
 def transactions_list_func(file_name: str) -> List[Dict[str, Union[str, int, dict, float]]]:
     """Принимает название JSON файла с информацией о транзакциях.
     Файл располагается в директории data корневого каталого проекта.
     Возвращает список словарей транзакций."""
-    transact_logger.info("Программа начинает работу.")
-    if os.name == "nt":
-        project_path = "\\".join((os.path.dirname(os.path.abspath(__file__))).split("\\")[:-1])
-        data_path = f"{project_path}\\data\\"
-    else:
-        project_path = "/".join((os.path.dirname(os.path.abspath(__file__))).split("/")[:-1])
-        data_path = f"{project_path}/data/"
+    logger.info("Программа начинает работу.")
+    file_with_dir = os.path.join(DATA_DIR, file_name)
+
     try:
-        transact_logger.info(f"Программа пытается открыть файл '{file_name}'.")
-        with open(f"{data_path}{file_name}", "r", encoding="UTF-8") as file:
-            transact_logger.info(f"Программа начинает обработку файла '{file_name}'.")
+        logger.info(f"Программа пытается открыть файл '{file_name}'.")
+        with open(file_with_dir, "r", encoding="UTF-8") as file:
+            logger.info(f"Программа начинает обработку файла '{file_name}'.")
             try:
                 data = json.load(file)
-                transact_logger.info(f"Программа успешно обработала файл '{file_name}'.")
+                logger.info(f"Программа успешно обработала файл '{file_name}'.")
                 if isinstance(data, list):
-                    transact_logger.info("Программа завершает свою работу.")
+                    logger.info("Программа завершает свою работу.")
                     return data
                 else:
-                    transact_logger.info("Программа завершает свою работу.")
+                    logger.info("Программа завершает свою работу.")
                     return []
             except JSONDecodeError:
                 print("Невозможно декодировать файл. Проверьте содержимое файла!")
-                transact_logger.error("Невозможно декодировать файл!'.")
+                logger.error("Невозможно декодировать файл!'.")
                 return []
     except FileNotFoundError:
         print("Указанный файл не найден!")
-        transact_logger.error("Файл не найден!")
+        logger.error("Файл не найден!")
         return []
+
+
+transactions_list_func("operations.json")

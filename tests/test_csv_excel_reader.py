@@ -1,5 +1,7 @@
 import pytest
 from src.csv_excel_reader import csv_excel_reader
+from unittest.mock import patch, mock_open
+
 
 
 expected = [
@@ -46,3 +48,22 @@ def test_csv_excel_reader_with_no_file():
     with pytest.raises(Exception) as exc_info:
         csv_excel_reader("test_none.csv")
         assert str(exc_info.value) == "При считывании файла произошла ошибка."
+
+
+#Тестирование с mock patch
+data = "[{'id': 650703.0, 'state': 'EXECUTED', 'date': '2023-09-05T11:30:32Z', 'amount': 16210.0, 'currency_name': 'Sol'}]"
+expected_result = [
+        {'id': 650703.0, 'state': 'EXECUTED', 'date': '2023-09-05T11:30:32Z', 'amount': 16210.0, 'currency_name': 'Sol'}
+    ]
+
+# При включении теста появляется assertion error - пустой список не равен ожидаемому
+@patch("builtins.open", new_callable=mock_open, read_data=data)
+def test_csv_excel_reader_2(mock_file):
+    result = csv_excel_reader("test_file.csv")
+    assert result == expected_result
+
+# При включении теста появляется assertion error - None не равен ожидаемому
+def test_csv_excel_reader_3():
+    with patch('builtins.open') as mock_open:
+        mock_open = [{'id': 650703.0, 'state': 'EXECUTED', 'date': '2023-09-05T11:30:32Z', 'amount': 16210.0, 'currency_name': 'Sol'}]
+        assert csv_excel_reader("test_file.csv") == expected_result

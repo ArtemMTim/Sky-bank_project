@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 def transaction_convertation(trasaction: Dict) -> float:
     """Принимает информацию о транзакции в формате словаря. Возвращает сумму транзакции в рублях,
     если транзакция осуществлялась в другой валюте, производит конвертацию в рубли через API."""
-    amount = trasaction["operationAmount"]["amount"]
-    currency = trasaction["operationAmount"]["currency"]["code"]
+    amount = trasaction["amount"]
+    currency = trasaction["currency_code"]
     if currency == "RUB":
         return float(amount)
     else:
